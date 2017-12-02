@@ -4,27 +4,29 @@ var getRandomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 };
 
-var getMaxValue = function (array, max) {
-  for(var i = 0 ; i < array.length; i++ ) {
+var getMaxValue = function (array) {
+  var max = 0;
+
+  for (var i = 0; i < array.length; i++) {
     if (array[i] > max) {
       max = array[i];
     }
   }
 
   return max;
-}
+};
 
-var drawHistogram = function (ctx, name, time, step, height, histoX, histoHeight, columnIndent, index) {
+var drawHistogram = function (ctx, name, time, height, histoHeight, position) {
   ctx.fillStyle = '#000';
-  ctx.fillText(time.toFixed(0), histoX + columnIndent * index, 90 + (histoHeight - height));
+  ctx.fillText(time.toFixed(0), position, 90 + (histoHeight - height));
 
-  name === 'Вы' ? ctx.fillStyle = 'rgba(255, 0, 0, 1)' : ctx.fillStyle = 'rgba(0,0,255,0.' + getRandomNumber(1, 9) + ')';
+  ctx.fillStyle = (name === 'Вы') ? 'rgba(255, 0, 0, 1)' : 'rgba(0,0,255,0.' + getRandomNumber(1, 9) + ')';
 
-  ctx.fillRect(histoX + columnIndent * index, 100 + (histoHeight - height), 40, height);
+  ctx.fillRect(position, 100 + (histoHeight - height), 40, height);
 
   ctx.fillStyle = '#000';
-  ctx.fillText(name, histoX + columnIndent * index, 100 + histoHeight + 20);
-}
+  ctx.fillText(name, position, 100 + histoHeight + 20);
+};
 
 window.renderStatistics = function (ctx, names, times) {
   ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
@@ -38,21 +40,19 @@ window.renderStatistics = function (ctx, names, times) {
   ctx.font = '16px PT Mono';
 
   ctx.fillText('Ура вы победили!', 120, 40);
-
-  var max = -1;
-
-  max = getMaxValue(times, max);
-
   ctx.fillText('Список результатов:', 120, 60);
 
+  var max = getMaxValue(times);
   var histoHeight = 150;
   var histoX = 150;
   var step = histoHeight / max;
   var columnIndent = 90;
   var height;
+  var position;
 
   for (var i = 0; i < times.length; i++) {
     height = step * times[i];
-    drawHistogram (ctx, names[i], times[i], step, height, histoX, histoHeight, columnIndent, i)
+    position = histoX + columnIndent * i;
+    drawHistogram(ctx, names[i], times[i], height, histoHeight, position);
   }
 };
